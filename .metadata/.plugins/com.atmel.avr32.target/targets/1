@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<target daisydevsafter="0" adapter="AVR32 Simulator" comport="" daisyenabled="false" cpu="UC3B0128" daisydevsbefore="0" clocksource="0" default="false" serial="0" binary-date="0" binary="" connection-type="usb" daisybitsbefore="0" name="AVR32 Simulator" daisybitsafter="0" id="1" board="AVR32 Simulator">
+	<description></description>
+</target>
