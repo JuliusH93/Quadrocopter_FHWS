@@ -42,10 +42,15 @@
 #include "basics.h"
 #include "ADXL345.h"
 #include "ITG3200.h"
+#include "BlCtrl.h"
 #include "TWI_NG.h"
 #include "TC_NG.h"
 
-sensorDaten_raw sensorWerte;
+#include <stdint.h>
+#include <stdbool.h>
+#include "board.h"
+
+#include "gpio.h"
 
 int counter = 0;
 char debug_line[DEBUG_BUFFER_SIZE];
@@ -73,6 +78,7 @@ if (gpio_get_pin_interrupt_flag(GPIO_JOYSTICK_PUSH))
   }
 }
 
+int tcCounter = 0;
 
 int main(void) {
 
@@ -125,7 +131,8 @@ int main(void) {
 
 	  // initialize LCD
 	  dip204_init(backlight_PWM, TRUE);
-
+	  dip_write_line("Display initialized",1);
+	  dip_write_line("bla12123123",1);
 	  // Initialisiere die Interrupt Vector Tabelle:
 	  // Nur einmal ausführen vor dem Registrieren der Interrupts!
 
@@ -137,12 +144,14 @@ int main(void) {
 
 	  // Enable all interrupts.
 	  Enable_global_interrupt();
+	  dip_write_line("bla",1);
 
 	  // Init Button Interrupts
 	  gpio_enable_pin_interrupt(GPIO_JOYSTICK_UP , GPIO_FALLING_EDGE);
 	  gpio_enable_pin_interrupt(GPIO_JOYSTICK_DOWN , GPIO_FALLING_EDGE);
 	  gpio_enable_pin_interrupt(GPIO_JOYSTICK_PUSH , GPIO_FALLING_EDGE);
 
+	  dip_write_line("Interrupts follow",1);
 	  Disable_global_interrupt();
 	    /* register PB0 handler on level 1 */
 	  INTC_register_interrupt
@@ -154,30 +163,47 @@ int main(void) {
 	  INTC_register_interrupt
 	  (&Joy_int_handler, AVR32_GPIO_IRQ_0 + (GPIO_JOYSTICK_PUSH/8), AVR32_INTC_INT1);
 
+	  dip_write_line("Joy Stuff registered",1);
 	  /* Enable all interrupts */
 	  Enable_global_interrupt();
 
+	  dip_write_line("Interrupts registered",1);
+	  dip204_clear_display();
 
 		 // Display default message.
 		dip204_set_cursor_position(1,1);
 		dip204_write_string("Quadrocopter");
 		dip204_hide_cursor();
 
-
-	    unsigned int counter = 0;
+		int myCounter = 0;
+		sensorDaten_raw accelerometerDaten = {0};
+		sensorDaten_raw gyrometerDaten = {0};
+		// TODO: ADXL und ITG read funktionen
 
 	    while (1)
 	    {
-				counter++;
 				//sensorWerte_raw = TODO;
 				//handleNewSensorData(sensorWerte);
-				sprintf(debug_line,"%d", counter);
-				dip_write_sensor_data("test1","test2",2);
-				wait_ms(100);
+				char outputString[20];
+				sprintf(outputString,"%d",myCounter);
+				dip_write_line(outputString,2);
+				myCounter++;
+				delay_ms(100);
+				if((myConter % 5) == 0)
+				{
+					set_engine();
+				}
 	    }
 
 	    return 0;
 }
+
+void dip_write_line(char* input1, int zeile)
+{
+	dip204_set_cursor_position(1,zeile);
+	dip204_write_string(input1);
+}
+
 
 void dip_write_sensor_data(char* input1, char* input2, int zeile)
 {
@@ -187,10 +213,10 @@ void dip_write_sensor_data(char* input1, char* input2, int zeile)
 	dip204_write_string(input2);
 }
 
-void handleNewSensorData(sensorWerte_raw sensorWerte)
+/*void handleNewSensorData(sensorWerte_raw sensorWerte)
 {
 	//TODO
-}
+}*/
 
 void USART_schreiben(char* string){
 }
