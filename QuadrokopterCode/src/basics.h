@@ -19,7 +19,6 @@
 typedef struct {
 	double sensor_1;
 	double sensor_2;
-	// Das ist nur ein Beispiel: Bennent Sie besser!
 } sensorDaten_raw;
 
 void dip_write_string(char* string, int zeile);
