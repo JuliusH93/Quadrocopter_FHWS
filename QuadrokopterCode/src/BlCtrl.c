@@ -13,7 +13,7 @@
 
 // Module for the 4 Brushless Controllers (Motors)
 
-#include "..\QUAD_TWI_6DOF.h"
+#include "QUAD_TWI_6DOF.h"
 
 // Bl-Controller Packete
 twi_package_t packet_blctrl1;
