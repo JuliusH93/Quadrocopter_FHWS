@@ -115,19 +115,19 @@ void renew_display(){
 			break;
 
 		case 1:
-			snprintf(line_d,20,"Ax: %2.2f,%2.2f", sensorWerte.acc_x, sensorWerte.acc_x_dpf);
+			//snprintf(line_d,20,"Ax: %2.2f,%2.2f", sensorWerte.acc_x, sensorWerte.acc_x_dpf);
 			dip204_set_cursor_position(1,2);
 			dip204_write_string(line_d);
 			break;
 
 		case 2:
-			snprintf(line_d,20,"Ay: %2.2f,%2.2f", sensorWerte.acc_y, sensorWerte.acc_y_dpf);
+			//snprintf(line_d,20,"Ay: %2.2f,%2.2f", sensorWerte.acc_y, sensorWerte.acc_y_dpf);
 			dip204_set_cursor_position(1,3);
 			dip204_write_string(line_d);
 			break;
 
 		case 3:
-			snprintf(line_d,20,"Betrag: %2.2f", acc_betrag);
+			//snprintf(line_d,20,"Betrag: %2.2f", acc_betrag);
 			dip204_set_cursor_position(1,4);
 			dip204_write_string(line_d);
 			break;
@@ -147,19 +147,19 @@ void renew_display(){
 			break;
 
 		case 1:
-			snprintf(line_d,20,"Gx: %2.2f", sensorWerte.gyro_x);
+			//snprintf(line_d,20,"Gx: %2.2f", sensorWerte.gyro_x);
 			dip204_set_cursor_position(1,2);
 			dip204_write_string(line_d);
 			break;
 
 		case 2:
-			snprintf(line_d,20,"Gy: %2.2f", sensorWerte.gyro_y);
+			//snprintf(line_d,20,"Gy: %2.2f", sensorWerte.gyro_y);
 			dip204_set_cursor_position(1,3);
 			dip204_write_string(line_d);
 			break;
 
 		case 3:
-			snprintf(line_d,20,"Gz: %2.2f", sensorWerte.gyro_z);
+			//snprintf(line_d,20,"Gz: %2.2f", sensorWerte.gyro_z);
 			dip204_set_cursor_position(1,4);
 			dip204_write_string(line_d);
 			break;
@@ -174,25 +174,25 @@ void renew_display(){
 		switch(dip_index){
 
 		case 0:
-			snprintf(line_d,20,"Wxyz G,A,K");
+			//snprintf(line_d,20,"Wxyz G,A,K");
 			dip204_set_cursor_position(1,1);
 			dip204_write_string(line_d);
 			break;
 
 		case 1:
-			snprintf(line_d,20,"%2.1f,%2.1f,%2.1f", sensorWerte.winkel_x_gyro, sensorWerte.roll_acc, sensorWerte.winkel_x_kalman);
+			//snprintf(line_d,20,"%2.1f,%2.1f,%2.1f", sensorWerte.winkel_x_gyro, sensorWerte.roll_acc, sensorWerte.winkel_x_kalman);
 			dip204_set_cursor_position(1,2);
 			dip204_write_string(line_d);
 			break;
 
 		case 2:
-			snprintf(line_d,20,"%2.1f,%2.1f,%2.1f", sensorWerte.winkel_y_gyro, sensorWerte.pitch_acc, sensorWerte.winkel_y_kalman);
+			//snprintf(line_d,20,"%2.1f,%2.1f,%2.1f", sensorWerte.winkel_y_gyro, sensorWerte.pitch_acc, sensorWerte.winkel_y_kalman);
 			dip204_set_cursor_position(1,3);
 			dip204_write_string(line_d);
 			break;
 
 		case 3:
-			snprintf(line_d,20,"%2.1f", sensorWerte.winkel_z_gyro);
+			//snprintf(line_d,20,"%2.1f", sensorWerte.winkel_z_gyro);
 			dip204_set_cursor_position(1,4);
 			dip204_write_string(line_d);
 			break;
@@ -206,25 +206,25 @@ void renew_display(){
 		switch(dip_index){
 
 		case 0:
-			snprintf(line_d,20,"W:%2.2f,S:%d", sensorWerte.winkel_y_gyro, controllerWerte.pid_roll.state);
+			//snprintf(line_d,20,"W:%2.2f,S:%d", sensorWerte.winkel_y_gyro, controllerWerte.pid_roll.state);
 			dip204_set_cursor_position(1,1);
 			dip204_write_string(line_d);
 			break;
 
 		case 1:
-			snprintf(line_d,20,"P:%2.2f", controllerWerte.pid_roll.p);
+			//snprintf(line_d,20,"P:%2.2f", controllerWerte.pid_roll.p);
 			dip204_set_cursor_position(1,2);
 			dip204_write_string(line_d);
 			break;
 
 		case 2:
-			snprintf(line_d,20,"I:%2.2f", controllerWerte.pid_roll.i);
+			//snprintf(line_d,20,"I:%2.2f", controllerWerte.pid_roll.i);
 			dip204_set_cursor_position(1,3);
 			dip204_write_string(line_d);
 			break;
 
 		case 3:
-			snprintf(line_d,20,"D:%2.2f", controllerWerte.pid_roll.d);
+			//snprintf(line_d,20,"D:%2.2f", controllerWerte.pid_roll.d);
 			dip204_set_cursor_position(1,4);
 			dip204_write_string(line_d);
 			break;
@@ -238,25 +238,25 @@ void renew_display(){
 		switch(dip_index){
 
 		case 0:
-			snprintf(line_d,20,"W:%2.2f", sensorWerte.winkel_z_gyro);
+			//snprintf(line_d,20,"W:%2.2f", sensorWerte.winkel_z_gyro);
 			dip204_set_cursor_position(1,1);
 			dip204_write_string(line_d);
 			break;
 
 		case 1:
-			snprintf(line_d,20,"P:%3.3f", controllerWerte.pid_yaw.p);
+			//snprintf(line_d,20,"P:%3.3f", controllerWerte.pid_yaw.p);
 			dip204_set_cursor_position(1,2);
 			dip204_write_string(line_d);
 			break;
 
 		case 2:
-			snprintf(line_d,20,"I:%2.2f", controllerWerte.pid_yaw.i);
+			//snprintf(line_d,20,"I:%2.2f", controllerWerte.pid_yaw.i);
 			dip204_set_cursor_position(1,3);
 			dip204_write_string(line_d);
 			break;
 
 		case 3:
-			snprintf(line_d,20,"D:%2.2f", controllerWerte.pid_yaw.d);
+			//snprintf(line_d,20,"D:%2.2f", controllerWerte.pid_yaw.d);
 			dip204_set_cursor_position(1,4);
 			dip204_write_string(line_d);
 			break;
@@ -270,25 +270,25 @@ void renew_display(){
 		switch(dip_index){
 
 		case 0:
-			snprintf(line_d,20,"Wy:%2.2f", sensorWerte.winkel_y_gyro);
+			//snprintf(line_d,20,"Wy:%2.2f", sensorWerte.winkel_y_gyro);
 			dip204_set_cursor_position(1,1);
 			dip204_write_string(line_d);
 			break;
 
 		case 1:
-			snprintf(line_d,20,"S:%2.2f,P:%2.2f", controllerWerte.soll_angle_roll, controllerWerte.roll_p_anteil);
+			//snprintf(line_d,20,"S:%2.2f,P:%2.2f", controllerWerte.soll_angle_roll, controllerWerte.roll_p_anteil);
 			dip204_set_cursor_position(1,2);
 			dip204_write_string(line_d);
 			break;
 
 		case 2:
-			snprintf(line_d,20,"F:%2.2f", controllerWerte.fehlerintegral_roll);
+			//snprintf(line_d,20,"F:%2.2f", controllerWerte.fehlerintegral_roll);
 			dip204_set_cursor_position(1,3);
 			dip204_write_string(line_d);
 			break;
 
 		case 3:
-			snprintf(line_d,20,"I:%2.2f,D:%2.2f", controllerWerte.roll_i_anteil, controllerWerte.roll_d_anteil);
+			//snprintf(line_d,20,"I:%2.2f,D:%2.2f", controllerWerte.roll_i_anteil, controllerWerte.roll_d_anteil);
 			dip204_set_cursor_position(1,4);
 			dip204_write_string(line_d);
 			break;
@@ -302,25 +302,25 @@ void renew_display(){
 			switch(dip_index){
 
 			case 0:
-				snprintf(line_d,20,"Q01:%1.3f,%1.3f", Quat.q0, Quat.q1);
+				//snprintf(line_d,20,"Q01:%1.3f,%1.3f", Quat.q0, Quat.q1);
 				dip204_set_cursor_position(1,1);
 				dip204_write_string(line_d);
 				break;
 
 			case 1:
-				snprintf(line_d,20,"Q23:%1.3f,%1.3f", Quat.q2, Quat.q3);
+				//snprintf(line_d,20,"Q23:%1.3f,%1.3f", Quat.q2, Quat.q3);
 				dip204_set_cursor_position(1,2);
 				dip204_write_string(line_d);
 				break;
 
 			case 2:
-				snprintf(line_d,20,"RP:%2.1f,%2.1f", sensorWerte.roll_angle, sensorWerte.pitch_angle);
+				//snprintf(line_d,20,"RP:%2.1f,%2.1f", sensorWerte.roll_angle, sensorWerte.pitch_angle);
 				dip204_set_cursor_position(1,3);
 				dip204_write_string(line_d);
 				break;
 
 			case 3:
-				snprintf(line_d,20,"Y:%2.1f", sensorWerte.yaw_angle);
+				//snprintf(line_d,20,"Y:%2.1f", sensorWerte.yaw_angle);
 				dip204_set_cursor_position(1,4);
 				dip204_write_string(line_d);
 
@@ -336,25 +336,25 @@ void renew_display(){
 			switch(dip_index){
 
 			case 0:
-				snprintf(line_d,20,"Wqxyz G,A,K");
+				//snprintf(line_d,20,"Wqxyz G,A,K");
 				dip204_set_cursor_position(1,1);
 				dip204_write_string(line_d);
 				break;
 
 			case 1:
-				snprintf(line_d,20,"%2.1f,%2.1f,%2.1f", sensorWerte.winkel_x_gyro, sensorWerte.roll_acc, sensorWerte.winkel_x_kalman);
+				//snprintf(line_d,20,"%2.1f,%2.1f,%2.1f", sensorWerte.winkel_x_gyro, sensorWerte.roll_acc, sensorWerte.winkel_x_kalman);
 				dip204_set_cursor_position(1,2);
 				dip204_write_string(line_d);
 				break;
 
 			case 2:
-				snprintf(line_d,20,"%2.1f,%2.1f,%2.1f", sensorWerte.winkel_y_gyro, sensorWerte.pitch_acc, sensorWerte.winkel_y_kalman);
+				//snprintf(line_d,20,"%2.1f,%2.1f,%2.1f", sensorWerte.winkel_y_gyro, sensorWerte.pitch_acc, sensorWerte.winkel_y_kalman);
 				dip204_set_cursor_position(1,3);
 				dip204_write_string(line_d);
 				break;
 
 			case 3:
-				snprintf(line_d,20,"%2.1f", sensorWerte.yaw_angle);
+				//////snprintf(line_d,20,"%2.1f", sensorWerte.yaw_angle);
 				dip204_set_cursor_position(1,4);
 				dip204_write_string(line_d);
 				break;
@@ -405,7 +405,7 @@ static void dip204_example_PB_int_handler(void)				// For Debug, Obsolete to Fly
   if (gpio_get_pin_interrupt_flag(GPIO_PUSH_BUTTON_1))
   {
 
-	  setRPY(10, 0, 0);
+	  //setRPY(10, 0, 0);
 
 	  gpio_clear_pin_interrupt_flag(GPIO_PUSH_BUTTON_1);
   }
@@ -413,7 +413,7 @@ static void dip204_example_PB_int_handler(void)				// For Debug, Obsolete to Fly
   if (gpio_get_pin_interrupt_flag(GPIO_PUSH_BUTTON_2))
   {
 
-	setRPY(-10, 0, 0);
+	//setRPY(-10, 0, 0);
 	gpio_clear_pin_interrupt_flag(GPIO_PUSH_BUTTON_2);
   }
 }

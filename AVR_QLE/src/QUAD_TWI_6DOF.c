@@ -65,6 +65,9 @@ static void Joy_int_handler(void) {
 		Motorn.stellwert_blctrl_engine2++;
 		Motorn.stellwert_blctrl_engine3++;
 		Motorn.stellwert_blctrl_engine4++;
+		dip204_set_cursor_position(1,1);
+		dip204_clear_display();
+		dip204_write_string("Up");
 		/* allow new interrupt : clear the IFR flag */
 		gpio_clear_pin_interrupt_flag(GPIO_JOYSTICK_UP);
 	}
@@ -74,6 +77,9 @@ static void Joy_int_handler(void) {
 			Motorn.stellwert_blctrl_engine2--;
 			Motorn.stellwert_blctrl_engine3--;
 			Motorn.stellwert_blctrl_engine4--;
+			dip204_set_cursor_position(1,1);
+			dip204_clear_display();
+					dip204_write_string("Down");
 		}
 		/* allow new interrupt : clear the IFR flag */
 		gpio_clear_pin_interrupt_flag(GPIO_JOYSTICK_DOWN);
@@ -84,117 +90,169 @@ static void Joy_int_handler(void) {
 		Motorn.stellwert_blctrl_engine3 = 0;
 		Motorn.stellwert_blctrl_engine4 = 0;
 		/* allow new interrupt : clear the IFR flag */
+		dip204_set_cursor_position(1,1);
+		dip204_clear_display();
+		dip204_write_string("Reset!");
 		gpio_clear_pin_interrupt_flag(GPIO_JOYSTICK_PUSH);
 	}
 }
 
 int main(void) {
 	///////////////////////////////////////////////////////////////////////////////////////
-	// Init //////////// //////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////
+		// Init //////////// //////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////
 
-	gpio_set_gpio_pin(INIT_READY_LED); // First LED means Main is starting
+		gpio_set_gpio_pin(INIT_READY_LED); // First LED means Main is starting
 
-	gpio_clr_gpio_pin(I2C_RESET_CLEAR_PIN); // Set GND Pin back to GND to start Sensor
+		gpio_clr_gpio_pin(I2C_RESET_CLEAR_PIN); // Set GND Pin back to GND to start Sensor
 
-	if (CPU_SPEED == 60000000)
-		SetProcessorFrequency(pm); // Use 60MHz
-	else
-		pcl_switch_to_osc(PCL_OSC0, CPU_SPEED, OSC0_STARTUP); // Switch main clock to external oscillator 0 (crystal), 12 MHz
+		if (CPU_SPEED == 60000000)
+			SetProcessorFrequency(pm); // Use 60MHz
+		else
+			pcl_switch_to_osc(PCL_OSC0, CPU_SPEED, OSC0_STARTUP); // Switch main clock to external oscillator 0 (crystal), 12 MHz
 
-	AVR32_HMATRIX.mcfg[AVR32_HMATRIX_MASTER_CPU_INSN] = 0x1;
+		AVR32_HMATRIX.mcfg[AVR32_HMATRIX_MASTER_CPU_INSN] = 0x1;
 
-	// Disable interrupts
-	Disable_global_interrupt();
+		// Disable interrupts
+		Disable_global_interrupt();
 
-	// init the interrupts
-	INTC_init_interrupts();
+		// init the interrupts
+		INTC_init_interrupts();
 
-	#ifdef DISPLAY_ON
-	myDIP_init(); // Init DIP
-	#endif
+		init_button_irq();
 
-	init_button_irq();
+		myTC_init(); // Init TC
+		myUSART_init(); // Init USART
+		myTWI_init(); // Init TWI
 
-	myTC_init(); // Init TC
-	myUSART_init(); // Init USART
-	myTWI_init(); // Init TWI
+		wait_ms(500);
 
-	INTC_register_interrupt(&Joy_int_handler, AVR32_GPIO_IRQ_0
-			+ (GPIO_JOYSTICK_UP / 8), AVR32_INTC_INT1);
+		//Enable all interrupts.
+		Enable_global_interrupt();
 
-	INTC_register_interrupt(&Joy_int_handler, AVR32_GPIO_IRQ_0
-			+ (GPIO_JOYSTICK_DOWN / 8), AVR32_INTC_INT1);
+		// Init TWI Slaves
+		blctrl_init(); // Motor Controller
 
-	INTC_register_interrupt(&Joy_int_handler, AVR32_GPIO_IRQ_0
-			+ (GPIO_JOYSTICK_PUSH / 8), AVR32_INTC_INT1);
+	    //INIT IMU
+	    Init_IMU_Sensors();
 
-	wait_ms(500);
+		gpio_clr_gpio_pin(INIT_READY_LED);
 
-	//Enable all interrupts.
-	Enable_global_interrupt();
+		debug_wait = wait_ms(500);
 
-	// Init TWI Slaves
-	blctrl_init(); // Motor Controller
+		USART_schreiben("Init accomplished\n");
 
-    //INIT IMU
-    Init_IMU_Sensors();
+		///////////////////////////////////////////////////////////////////////////////////////
+		// Init accomplished //////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////
 
-	gpio_clr_gpio_pin(INIT_READY_LED);
+		gpio_set_gpio_pin(INIT_READY_LED);
 
-	#ifdef DISPLAY_ON
-	// ---- StartUp --------------------------------
-	// *******	Display		**********************
-	dip204_set_cursor_position(1,1);
-	dip204_write_string(PROJEKT_NAME);
-	dip204_hide_cursor();
-	// ---------------------------------------------	 *
-	#endif
+	// Map SPI Pins
+	static const gpio_map_t DIP204_SPI_GPIO_MAP =
+	  {
+	    {DIP204_SPI_SCK_PIN,  DIP204_SPI_SCK_FUNCTION },  // SPI Clock.
+	    {DIP204_SPI_MISO_PIN, DIP204_SPI_MISO_FUNCTION},  // MISO.
+	    {DIP204_SPI_MOSI_PIN, DIP204_SPI_MOSI_FUNCTION},  // MOSI.
+	    {DIP204_SPI_NPCS_PIN, DIP204_SPI_NPCS_FUNCTION}   // Chip Select NPCS.
+	  };
 
-	debug_wait = wait_ms(500);
+	  // Switch the CPU main clock to oscillator 0
+	  pcl_switch_to_osc(PCL_OSC0, CPU_SPEED, OSC0_STARTUP); // Switch main clock to external oscillator 0 (crystal), 12 MHz
 
-	USART_schreiben("Init accomplished\n");
 
-	///////////////////////////////////////////////////////////////////////////////////////
-	// Init accomplished //////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////
+	    // add the spi options driver structure for the LCD DIP204
+	  spi_options_t spiOptions =
+	  {
+	    .reg          = DIP204_SPI_NPCS,
+	    .baudrate     = 1000000,
+	    .bits         = 8,
+	    .spck_delay   = 0,
+	    .trans_delay  = 0,
+	    .stay_act     = 1,
+	    .spi_mode     = 0,
+	    .modfdis      = 1
+	  };
 
-	gpio_set_gpio_pin(INIT_READY_LED);
 
-	// Main Loop
-	while (1) {
 
-		if (steuerWerte.calibrate_on && !steuerWerte.engine_on) {
+	  // SPI Inits: Assign I/Os to SPI
+	  gpio_enable_module(DIP204_SPI_GPIO_MAP,
+	                       sizeof(DIP204_SPI_GPIO_MAP) / sizeof(DIP204_SPI_GPIO_MAP[0]));
 
-			gpio_clr_gpio_pin(INIT_READY_LED);
+	  // Initialize as master
+	  spi_initMaster(DIP204_SPI, &spiOptions);
 
-			gpio_set_gpio_pin(INIT_READY_LED);
+	  // Set selection mode: variable_ps, pcs_decode, delay
+	  spi_selectionMode(DIP204_SPI, 0, 0, 0);
 
-			steuerWerte.calibrate_on = 0;
-			last_Sample_time = tc_ticks;
-		}
+	  // Enable SPI
+	  spi_enable(DIP204_SPI);
 
-		// Datenpfad:
-		// 1. SignalProcessing liest und schreibt in SP_Data
-		// 2. Wenn aktiv, Kalman Filter bzw. Complementary Quaternionen Filter ändern SP_Data
-		// 3. Attitude Control hat SP_Data als Input und Stellwerte für Motorn als Output
-		// 4. Motor Control, hier set_engine, stellt die Motoren: Input Motorn
+	  // setup chip registers
+	  spi_setupChipReg(DIP204_SPI, &spiOptions, FOSC0);
 
-		// Bleibende Abhängigkeiten:
-		// Kalman Filter benötigt Daten aus Sensorwerten und Controllerwerte
-		// Attitude Control liest SteuerWerte
-		// Signal Processing manipuliert SteuerWerte
+	  // initialize delay driver
+	  delay_init( FOSC0 );
 
-		if (tc_ticks >= last_Sample_time + SAMPLE_TIME) {
-			last_Sample_time = tc_ticks;
+	  // initialize LCD
+	  dip204_init(backlight_PWM, TRUE);
 
-			set_engine(&Motorn);
+	  // Initialisiere die Interrupt Vector Tabelle:
+	  // Nur einmal ausführen vor dem Registrieren der Interrupts!
 
-			#ifdef DISPLAY_ON
-			  setDisplay();
-			#endif
-		}
+	  // Disable all interrupts.
+	  Disable_global_interrupt();
 
-	}
-	return 0;
+	  // init the interrupts
+	  INTC_init_interrupts();
+
+	  // Enable all interrupts.
+	  Enable_global_interrupt();
+
+	  // Init Button Interrupts
+	  gpio_enable_pin_interrupt(GPIO_JOYSTICK_UP , GPIO_FALLING_EDGE);
+	  gpio_enable_pin_interrupt(GPIO_JOYSTICK_DOWN , GPIO_FALLING_EDGE);
+	  gpio_enable_pin_interrupt(GPIO_JOYSTICK_PUSH , GPIO_FALLING_EDGE);
+
+	  Disable_global_interrupt();
+	    /* register PB0 handler on level 1 */
+	  INTC_register_interrupt
+	  (&Joy_int_handler, AVR32_GPIO_IRQ_0 + (GPIO_JOYSTICK_UP/8) ,  AVR32_INTC_INT1);
+
+	  INTC_register_interrupt
+	  (&Joy_int_handler, AVR32_GPIO_IRQ_0 + (GPIO_JOYSTICK_DOWN/8) ,  AVR32_INTC_INT1);
+
+	  INTC_register_interrupt
+	  (&Joy_int_handler, AVR32_GPIO_IRQ_0 + (GPIO_JOYSTICK_PUSH/8), AVR32_INTC_INT1);
+
+	  /* Enable all interrupts */
+	  Enable_global_interrupt();
+
+
+		 // Display default message.
+		dip204_set_cursor_position(1,1);
+		dip204_write_string("BANANARAMA");
+		dip204_hide_cursor();
+
+
+	    unsigned int counter = 0;
+
+	    while (1)
+	    {
+				counter++;
+				sprintf(debug_line,"%d", counter);
+				dip204_set_cursor_position(1,4);
+				dip204_write_string(debug_line);
+				wait_ms(100);
+
+
+	    }
+
+	    return 0;
+}
+
+void dip_write_string(char* string, int zeile){
+    dip204_set_cursor_position(1,zeile);
+    dip204_write_string(string);
 }
